@@ -63,7 +63,7 @@ def test_one_input(data):
 
 def main():
     global patterns
-    filename = 'target.py'
+    filename = 'tests/a.py'
     patterns = extract_regexes_from_file(filename)
     atheris.Setup(sys.argv, test_one_input)
     atheris.Fuzz()
