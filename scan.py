@@ -26,7 +26,34 @@ class RegexExtractor(ast.NodeVisitor):
                     if isinstance(regex_pattern, ast.Str):
                         self.regexes.append(regex_pattern.s)
 
+                        if is_suspicious_regex(regex_pattern.s):
+                            print(f"Suspicious regex: {regex_pattern.s}")
+
         self.generic_visit(node)
+
+
+def is_suspicious_regex(regex):
+    stack = []
+
+    for char in regex:
+        if char == '(' or char == '[':
+            stack.append(char)
+        elif char == ')' or char == ']':
+            if len(stack) == 0:
+                return False
+            last = stack.pop()
+            if last == '(':
+                if char != ')':
+                    return False
+            elif last == '[':
+                if char != ']':
+                    return False
+        elif char == '*' or char == '+':
+            if len(stack) > 0:
+                return True
+    if len(stack) != 0:
+        return False
+    return False
 
 
 def extract_regexes_from_file(filename):
